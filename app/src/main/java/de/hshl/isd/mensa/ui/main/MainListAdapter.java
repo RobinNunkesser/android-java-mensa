@@ -55,10 +55,13 @@ class MainListAdapter extends ListAdapter<ItemViewModel, MainListAdapter.ItemVie
         holder.getText().setText(item.getText());
         if (ImageItemViewHolder.class.isInstance(holder) && ImageItemViewModel.class.isInstance(item)) {
             ((ImageItemViewHolder)holder).getDetail().setText(((ImageItemViewModel)item).getDetail());
-            Picasso.get().load(((ImageItemViewModel)item).getImage())
-                    .resize(200,200)
-                    .centerCrop()
-                    .into(((ImageItemViewHolder)holder).getImage());
+            String image = ((ImageItemViewModel)item).getImage();
+            if (image!=null && !image.isEmpty()) {
+                Picasso.get().load(image)
+                        .resize(200, 200)
+                        .centerCrop()
+                        .into(((ImageItemViewHolder) holder).getImage());
+            }
         }
     }
 

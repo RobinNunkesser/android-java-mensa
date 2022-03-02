@@ -23,7 +23,7 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hshl.isd.mensa.MealQueryDTO;
 import de.hshl.isd.mensa.R;
-import io.github.italbytz.adapters.meal.MockGetMealsCommand;
+import io.github.italbytz.adapters.meal.OpenMensaGetMealsCommand;
 import io.github.italbytz.ports.meal.GetMealsCommand;
 import io.github.italbytz.ports.meal.Meal;
 import io.github.italbytz.ports.meal.MealCollection;
@@ -31,7 +31,7 @@ import static de.hshl.isd.mensa.CoroutineWrapperKt.*;
 
 public class MainFragment extends Fragment {
 
-    private GetMealsCommand command = new MockGetMealsCommand();
+    private GetMealsCommand command = new OpenMensaGetMealsCommand();
 
     @Nullable
     @Override
