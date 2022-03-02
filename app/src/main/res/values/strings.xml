@@ -2,4 +2,19 @@
     <string name="app_name">Mensa</string>
     <string name="bottom_nav_mensa">Mensa</string>
     <string name="bottom_nav_settings">Settings</string>
+
+    <string-array name="pref_status_entries">
+        <item>Student</item>
+        <item>Employee</item>
+        <item>Pupil</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="pref_status_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
 </resources>

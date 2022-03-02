@@ -1,7 +1,9 @@
 package de.hshl.isd.mensa.ui.main;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,10 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hshl.isd.mensa.MealQueryDTO;
 import de.hshl.isd.mensa.R;
@@ -50,11 +55,16 @@ public class MainFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         RecyclerView recyclerView = requireActivity().findViewById(R.id.list);
         MainListAdapter adapter = new MainListAdapter();
+//        recyclerView.setAdapter(adapter);
 
         try {
             executeFromJava(command,new
                     MealQueryDTO(42, LocalDate.now())).thenAccept(meals -> {
-                Log.i("MainFragment", meals.toString());
+
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(requireActivity());
+                int status = sharedPreferences.getInt("PREF_STATUS",0);
+
                 List<ItemViewModel> mealList = new ArrayList<ItemViewModel>();
                 for (MealCollection mealCollection:meals) {
                     String category = "";
@@ -77,16 +87,28 @@ public class MainFragment extends Fragment {
                     }
                     mealList.add(new ItemViewModel(category));
                     for (Meal meal:mealCollection.getMeals()) {
-                        mealList.add(new ImageItemViewModel(meal.getName(), meal.getImage(), meal.getPrice().getEmployees().toString()));
+                        double price = 0.0;
+                        switch (status) {
+                            case 0: price = meal.getPrice().getStudents(); break;
+                            case 1: price = meal.getPrice().getEmployees(); break;
+                            case 2: price = meal.getPrice().getPupils(); break;
+                            case 3: price = meal.getPrice().getOthers(); break;
+                        }
+                        NumberFormat formatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+                        mealList.add(new ImageItemViewModel(meal.getName(), meal.getImage(), formatter.format(price)));
                     }
                 }
-
                 adapter.submitList(mealList);
                 recyclerView.setAdapter(adapter);
             });
 
         } catch (Exception ex) {
-            Log.e("MainFragment", ex.getLocalizedMessage());
+            (new AlertDialog.Builder(requireActivity()))
+                .setMessage(ex.getLocalizedMessage())
+                .setTitle(android.R.string.dialog_alert_title)
+                .setPositiveButton(android.R.string.ok, null)
+                    .create()
+                    .show();
         }
 
 
