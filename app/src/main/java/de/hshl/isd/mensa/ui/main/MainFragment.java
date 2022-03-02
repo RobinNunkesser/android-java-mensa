@@ -22,6 +22,7 @@ import de.hshl.isd.mensa.MealQueryDTO;
 import de.hshl.isd.mensa.R;
 import io.github.italbytz.adapters.meal.MockGetMealsCommand;
 import io.github.italbytz.ports.meal.GetMealsCommand;
+import io.github.italbytz.ports.meal.Meal;
 import io.github.italbytz.ports.meal.MealCollection;
 import static de.hshl.isd.mensa.CoroutineWrapperKt.*;
 
@@ -51,13 +52,39 @@ public class MainFragment extends Fragment {
         MainListAdapter adapter = new MainListAdapter();
 
         try {
-            List<MealCollection> meals = executeFromJava(command,new
-                    MealQueryDTO(42, LocalDate.now())).get();
-            Log.i("MainFragment", meals.toString());
-            List<ItemViewModel> mealList = new ArrayList<ItemViewModel>();
-            mealList.add(new ItemViewModel("Hello"));
-            adapter.submitList(mealList);
-            recyclerView.setAdapter(adapter);
+            executeFromJava(command,new
+                    MealQueryDTO(42, LocalDate.now())).thenAccept(meals -> {
+                Log.i("MainFragment", meals.toString());
+                List<ItemViewModel> mealList = new ArrayList<ItemViewModel>();
+                for (MealCollection mealCollection:meals) {
+                    String category = "";
+                    switch (mealCollection.getCategory()) {
+                        case NONE:
+                            category = "";
+                            break;
+                        case DESSERT:
+                            category = "Dessert";
+                            break;
+                        case DISH:
+                            category = "Hauptgerichte";
+                            break;
+                        case SIDEDISH:
+                            category = "Beilagen";
+                            break;
+                        case SOUP:
+                            category = "Suppen / Eintöpfe";
+                            break;
+                    }
+                    mealList.add(new ItemViewModel(category));
+                    for (Meal meal:mealCollection.getMeals()) {
+                        mealList.add(new ImageItemViewModel(meal.getName(), meal.getImage(), meal.getPrice().getEmployees().toString()));
+                    }
+                }
+
+                adapter.submitList(mealList);
+                recyclerView.setAdapter(adapter);
+            });
+
         } catch (Exception ex) {
             Log.e("MainFragment", ex.getLocalizedMessage());
         }
