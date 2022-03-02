@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import de.hshl.isd.mensa.MealQueryDTO;
 import de.hshl.isd.mensa.R;
 import io.github.italbytz.adapters.meal.MockGetMealsCommand;
@@ -44,16 +46,24 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        RecyclerView recyclerView = requireActivity().findViewById(R.id.list);
+        MainListAdapter adapter = new MainListAdapter();
+
         try {
             List<MealCollection> meals = executeFromJava(command,new
                     MealQueryDTO(42, LocalDate.now())).get();
             Log.i("MainFragment", meals.toString());
+            List<ItemViewModel> mealList = new ArrayList<ItemViewModel>();
+            mealList.add(new ItemViewModel("Hello"));
+            adapter.submitList(mealList);
+            recyclerView.setAdapter(adapter);
         } catch (Exception ex) {
             Log.e("MainFragment", ex.getLocalizedMessage());
         }
 
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        // TODO: Use the ViewModel
+
+
 
     }
 
