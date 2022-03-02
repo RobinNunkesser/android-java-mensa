@@ -1,7 +1,6 @@
 package de.hshl.isd.mensa.ui.main;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +31,7 @@ import static de.hshl.isd.mensa.CoroutineWrapperKt.*;
 
 public class MainFragment extends Fragment {
 
-    private MainViewModel mViewModel;
     private GetMealsCommand command = new MockGetMealsCommand();
-
-    public static MainFragment newInstance() {
-        return new MainFragment();
-    }
 
     @Nullable
     @Override
@@ -59,8 +52,6 @@ public class MainFragment extends Fragment {
 
         MainListAdapter adapter = new MainListAdapter();
         adapter.submitList(new ArrayList<ItemViewModel>());
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        //mViewModel.getItems().observe(this, adapter::submitList);
         RecyclerView recyclerView = requireActivity().findViewById(R.id.list);
         recyclerView.setAdapter(adapter);
 
@@ -103,8 +94,6 @@ public class MainFragment extends Fragment {
                     }
                 }
                 adapter.submitList(mealList);
-                //mViewModel.setItems(mealList);
-                //adapter.submitList(mViewModel.getItems().getValue());
             });
 
         } catch (Exception ex) {
@@ -115,9 +104,6 @@ public class MainFragment extends Fragment {
                     .create()
                     .show();
         }
-
-
-
 
     }
 
