@@ -52,18 +52,22 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        RecyclerView recyclerView = requireActivity().findViewById(R.id.list);
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(requireActivity());
+        int status = Integer.parseInt(
+                sharedPreferences.getString("PREF_STATUS","0"));
+
         MainListAdapter adapter = new MainListAdapter();
-//        recyclerView.setAdapter(adapter);
+        adapter.submitList(new ArrayList<ItemViewModel>());
+        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        //mViewModel.getItems().observe(this, adapter::submitList);
+        RecyclerView recyclerView = requireActivity().findViewById(R.id.list);
+        recyclerView.setAdapter(adapter);
 
         try {
             executeFromJava(command,new
                     MealQueryDTO(42, LocalDate.now())).thenAccept(meals -> {
 
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(requireActivity());
-                int status = sharedPreferences.getInt("PREF_STATUS",0);
 
                 List<ItemViewModel> mealList = new ArrayList<ItemViewModel>();
                 for (MealCollection mealCollection:meals) {
@@ -99,7 +103,8 @@ public class MainFragment extends Fragment {
                     }
                 }
                 adapter.submitList(mealList);
-                recyclerView.setAdapter(adapter);
+                //mViewModel.setItems(mealList);
+                //adapter.submitList(mViewModel.getItems().getValue());
             });
 
         } catch (Exception ex) {
