@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Mensa</string>
+    <string name="bottom_nav_mensa">Mensa</string>
+    <string name="bottom_nav_settings">Settings</string>
 </resources>
